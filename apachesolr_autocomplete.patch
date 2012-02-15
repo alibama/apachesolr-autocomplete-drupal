@@ -1,0 +1,38 @@
+--- apachesolr_autocomplete.module	Wed Mar 02 15:01:12 2011
++++ apachesolr_autocomplete.modified.module	Sat Mar 05 16:40:31 2011
+@@ -75,6 +75,35 @@ function apachesolr_autocomplete_do_alte
+ }
+ 
+ /**
++ * Implementation of hook_form_alter().
++ *
++ * Tries to alter exposed forms from views that use apachesolr as the base table
++ */
++function apachesolr_autocomplete_form_alter(&$form, &$form_state, $form_id) {
++  if ($form_id == "views_exposed_form" && $form['text']) {
++    $form['#after_build'][] = 'apachesolr_autocomplete_views_exposed_form';
++  }
++}
++
++/**
++ * Callback for #after_build to alter apachesolr views exposed text widgets
++ *
++ * @see apachesolr_autocomplete_form_alter()
++ */
++function apachesolr_autocomplete_views_exposed_form($form, $form_element) {
++  // Is this a views that uses apachesolr as the base table?
++  if (($form_element['view']->base_table == 'apachesolr') || ($form_element['view']->base_table == 'apachesolr_node')) {
++    // Add autocomplete to all text-type form elements
++    foreach ($form as $id => $data) {
++      if ($data['#type'] == 'textfield') {
++        $form[$id]['#autocomplete_path'] = 'apachesolr_autocomplete';
++      }
++    }
++  }
++  return $form;
++}
++
++/**
+  * Implementation of hook_menu().
+  */
+ function apachesolr_autocomplete_menu() {
