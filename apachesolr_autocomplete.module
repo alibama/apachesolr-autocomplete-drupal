@@ -97,7 +97,7 @@ function apachesolr_autocomplete_views_exposed_form($form, $form_element) {
     // Add autocomplete to all text-type form elements
     foreach ($form as $id => $data) {
       if ($data['#type'] == 'textfield') {
-        $form[$id]['#autocomplete_path'] = 'apachesolr_autocomplete';
+        $form[$id]['#attributes']['class'] .= ' apachesolr-autocomplete unprocessed';
       }
     }
   }
